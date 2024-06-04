@@ -210,6 +210,10 @@
         <li class="<?php echo (url_is('usuarios*') ? 'active' : '') ?>"><a href="<?php echo site_url('usuarios') ?>"> <i class="icon-user"></i>Usuários </a></li>
 
         <li class="<?php echo (url_is('grupos*') ? 'active' : '') ?>"><a href="<?php echo site_url('grupos') ?>"> <i class="icon-settings"></i>Grupos & Permissões </a>
+
+        <li class="<?php echo (url_is('orcamentos*') ? 'active' : '') ?>"><a href="<?php echo site_url('orcamentos') ?>"> <i class="icon-bars"></i>Orçamentos </a>
+
+        <li class="<?php echo (url_is('recibos*') ? 'active' : '') ?>"><a href="<?php echo site_url('recibos') ?>"> <i class="icon-contract"></i>Recibos </a>
         </li>
 
 

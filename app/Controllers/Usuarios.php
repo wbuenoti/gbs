@@ -453,7 +453,6 @@ class Usuarios extends BaseController
             ->save($caminhoImagem);
     }
 
-
     private function removeImagemDoFileSystem(string $imagem)
     {
         $caminhoImagem = WRITEPATH . "uploads/usuarios/$imagem";
