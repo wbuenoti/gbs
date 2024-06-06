@@ -313,6 +313,74 @@ class Grupos extends BaseController
         return view('Grupos/permissoes', $data);
     }
 
+    public function salvarPermissoes()
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+
+        // Envio o hash do token do form
+        $retorno['token'] = csrf_hash();
+
+        // Recupero o post da requisição
+        $post = $this->request->getPost();
+
+
+        // Validamos a existência do grupo
+        $grupo = $this->buscaGrupoOu404($post['id']);
+
+
+        if (empty($post['permissao_id'])) {
+
+            // Retornamos os erros de validação
+            $retorno['erro'] = 'Por favor verifique os erros abaixo e tente novamente';
+            $retorno['erros_model'] = ['permissao_id' => 'Escolha uma ou mais permissões para salvar'];
+
+
+            // Retorno para o ajax request
+            return $this->response->setJSON($retorno);
+        }
+
+        // Receberá as permissões do POST
+        $permissaoPush = [];
+
+        foreach ($post['permissao_id'] as $permissao) {
+            array_push($permissaoPush, [
+                'grupo_id' => $grupo->id,
+                'permissao_id' => $permissao
+            ]);
+        }
+
+
+        $this->grupoPermissaoModel->insertBatch($permissaoPush);
+
+        session()->setFlashdata('sucesso', 'Dados salvos com sucesso!');
+
+        return $this->response->setJSON($retorno);
+    }
+
+    public function removePermissao(int $principal_id = null)
+    {
+        if ($this->request->getMethod() === 'POST') {
+
+
+            // if( ! $this->usuarioLogado()->temPermissaoPara('editar-grupos')){
+
+            //     return redirect()->back()->with('atencao', $this->usuarioLogado()->nome. ', você não tem permissão para acessar esse menu.' );
+            // }
+
+
+            // Exclui a permissão ($principal_id)
+            $this->grupoPermissaoModel->delete($principal_id);
+
+            return redirect()->back()->with('sucesso', 'Permissão removida com sucesso!!');
+        }
+
+        // Não é POST
+        return redirect()->back();
+    }
+
     /**
      * Método que recupera o grupo de acesso
      * 

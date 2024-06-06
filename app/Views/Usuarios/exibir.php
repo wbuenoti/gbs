@@ -26,7 +26,7 @@
 
                 <?php if ($usuario->imagem == null) : ?>
 
-                    <img src="<?php echo site_url('recursos/img/usuario_sem_imagem.png'); ?>" class="card-img-top" style="width: 90%" alt="Usuário sem imagem">
+                    <img src="<?php echo site_url('recursos/img/usuario_sem_imagem.png'); ?>" class="card-img-top" style="width: 90%;" alt="Usuário sem imagem">
 
 
                 <?php else : ?>
