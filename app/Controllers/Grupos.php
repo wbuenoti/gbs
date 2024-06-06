@@ -11,10 +11,14 @@ class Grupos extends BaseController
 {
 
     private $grupoModel;
+    private $grupoPermissaoModel;
+    private $permissaoModel;
 
     public function __construct()
     {
         $this->grupoModel = new \App\Models\GrupoModel();
+        $this->grupoPermissaoModel = new \App\Models\GrupoPermissaoModel();
+        $this->permissaoModel = new \App\Models\PermissaoModel();
     }
 
     public function index()
@@ -282,10 +286,29 @@ class Grupos extends BaseController
                 ->with('info', 'Não é necessário atribuir ou remover permissões de acesso para o grupo de Clientes.');
         }
 
+        // Garantimos a recueração de permissões quando não for admin ou clientes
+        if ($grupo->id > 2) {
+
+            $grupo->permissoes = $this->grupoPermissaoModel->recuperaPermissoesDoGrupo($grupo->id, 5);
+            $grupo->pager = $this->grupoPermissaoModel->pager;
+        }
+
+
         $data = [
             'titulo' => "Gerenciando as permissoes do grupo de acesso " . esc($grupo->nome),
             'grupo' => $grupo,
         ];
+
+        if (!empty($grupo->permissoes)) {
+            $permissoesExistentes = array_column($grupo->permissoes, 'permissao_id');
+
+            $data['permissoesDisponiveis'] = $this->permissaoModel->whereNotIn('id', $permissoesExistentes)->findAll();
+        } else {
+
+            // Se caiu aqui, é porque o grupo não possui nenhuma permissão.
+            // Portanto, enviamos todas para a view
+            $data['permissoesDisponiveis'] = $this->permissaoModel->findAll();
+        }
 
         return view('Grupos/permissoes', $data);
     }

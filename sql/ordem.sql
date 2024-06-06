@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 05/06/2024 às 04:39
+-- Tempo de geração: 06/06/2024 às 02:56
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -45,7 +45,9 @@ INSERT INTO `grupos` (`id`, `nome`, `descricao`, `exibir`, `criado_em`, `atualiz
 (1, 'Administrador', 'Grupo com acesso total ao sistema', 0, '2024-06-01 22:56:14', '2024-06-01 22:56:14', NULL),
 (2, 'Clientes', 'Esse grupo é destinado para a tribuição de clientes, pois os mesmo poderão logar no sistema para acessar suas ornes de serviços', 0, '2024-06-01 22:56:14', '2024-06-01 22:56:14', NULL),
 (3, 'Atendentes', 'Esse grupo acessa p sistema para realizar atendimento aos clientes', 1, '2024-06-01 22:56:14', '2024-06-02 03:06:21', NULL),
-(4, 'Especialista em microcomponentes', 'Grupo que será escolhido como opção na hora de definir um responsável técnico pela ordem de serviço.', 1, '2024-06-02 01:42:50', '2024-06-02 04:17:27', '2024-06-02 04:17:27');
+(4, 'Especialista em microcomponentes', 'Grupo que será escolhido como opção na hora de definir um responsável técnico pela ordem de serviço.', 1, '2024-06-02 01:42:50', '2024-06-02 04:17:27', '2024-06-02 04:17:27'),
+(5, 'Gerente', 'Acessa o sistema como gerente', 1, '2024-06-05 00:26:57', '2024-06-05 00:26:57', NULL),
+(6, 'Financeiro', 'Acessa o sistema para trabalhar com o financeiro', 1, '2024-06-05 00:27:19', '2024-06-05 00:27:19', NULL);
 
 -- --------------------------------------------------------
 
@@ -58,6 +60,17 @@ CREATE TABLE `grupos_permissoes` (
   `grupo_id` int(5) UNSIGNED NOT NULL,
   `permissao_id` int(5) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `grupos_permissoes`
+--
+
+INSERT INTO `grupos_permissoes` (`id`, `grupo_id`, `permissao_id`) VALUES
+(1, 6, 2),
+(2, 6, 3),
+(3, 4, 2),
+(4, 4, 3),
+(5, 3, 4);
 
 -- --------------------------------------------------------
 
@@ -6199,13 +6212,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de tabela `grupos`
 --
 ALTER TABLE `grupos`
-  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `grupos_permissoes`
 --
 ALTER TABLE `grupos_permissoes`
-  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `migrations`
