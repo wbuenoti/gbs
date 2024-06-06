@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 06/06/2024 às 02:56
+-- Tempo de geração: 06/06/2024 às 09:45
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `ordem`
+-- Banco de dados: `dbgbs`
 --
 
 -- --------------------------------------------------------
@@ -6161,7 +6161,7 @@ INSERT INTO `usuarios` (`id`, `nome`, `email`, `password_hash`, `reset_hash`, `r
 (5999, 'Dana Terryy', 'ublick@kautzer.com', '$2y$10$8y6mN4LX4okJqLKpzHhEiO12drJSJBFdPOSgt9/36YuEReZV6uTES', NULL, NULL, NULL, 0, '2024-05-27 02:43:13', '2024-06-01 04:52:54', '2024-06-01 01:18:17'),
 (6000, 'Miss Kristin VonRueden', 'stark.emory@kemmer.net', '123456', NULL, NULL, '1717228319_ad6fb59f61a557454dcf.jpg', 0, '2024-05-27 02:43:13', '2024-06-02 03:47:00', NULL),
 (6001, 'Wellington Bueno', 'pratashow@gmail.com', '$2y$10$eFDGbszWGba2lwuSKJOzaOWBNw6hb0yP.ewanlFIOvp.lzQvtAnoe', NULL, NULL, '1717122797_4c2d5faec4df2fcd8377.jpg', 1, '2024-05-30 03:24:55', '2024-05-30 23:33:17', NULL),
-(6002, 'Novo Usuario', 'novo@email.com', '$2y$10$ZNvBVW4j0Z0FTgl6DZ2BRu0TCYxsfO9ssRIbr1WatZKRbT72.fN8u', NULL, NULL, NULL, 0, '2024-05-30 03:33:32', '2024-06-01 05:35:51', NULL),
+(6002, 'Novo Usuario', 'novo@email.com', '$2y$10$ZNvBVW4j0Z0FTgl6DZ2BRu0TCYxsfO9ssRIbr1WatZKRbT72.fN8u', NULL, NULL, '1717659794_d508744b42b764d08230.jpg', 0, '2024-05-30 03:33:32', '2024-06-06 04:43:14', NULL),
 (6003, 'teste teste', 'liam.sauer@johnston.com.br', '$2y$10$EU5f.XZxgYMLBZK93nqAfOCXNhBYHWrTPVlcAdDDIbY3Z0/5m30z2', NULL, NULL, '1717231020_b87d7390133704395b10.jpg', 0, '2024-05-30 03:47:05', '2024-06-01 05:37:00', NULL),
 (6004, 'teste testes', 'liam.sauer@johnston.br', '$2y$10$SUmesMKc4/UZz8ZfVWtRVubXw12s5colcf4ulGKPF5FPoIJh5xSm2', NULL, NULL, '1717230992_e977656f2336dfe05c9f.jpg', 0, '2024-05-30 03:48:30', '2024-06-01 05:36:32', NULL);
 
