@@ -13,10 +13,15 @@ use function PHPUnit\Framework\throwException;
 class Usuarios extends BaseController
 {
     private $usuarioModel;
+    private $grupoUsuarioModel;
+    private $grupoModel;
+
 
     public function __construct()
     {
         $this->usuarioModel = new \App\Models\UsuarioModel();
+        $this->grupoUsuarioModel = new \App\Models\grupoUsuarioModel();
+        $this->grupoModel = new \App\Models\grupoModel();
     }
 
     public function index()
@@ -407,6 +412,167 @@ class Usuarios extends BaseController
         return redirect()->back()->with('sucesso', "Usuário $usuario->nome Recuperado com sucesso!");
     }
 
+    public function grupos(int $id = null)
+    {
+
+        $usuario = $this->buscaUsuarioOu404($id);
+
+
+        $usuario->grupos = $this->grupoUsuarioModel->recuperaGruposDoUsuario($usuario->id, 5);
+        $usuario->pager = $this->grupoUsuarioModel->pager;
+
+
+        //caso não funcione remover essa parte
+        if ($usuario->deletado_em != null) {
+            return redirect()->back()->with('info', "Usuário $usuario->nome encontra-se excluído, não poderá ser editado");
+        }
+
+        $data = [
+            'titulo' => "Gerenciando os grupos de acesso do usuário " . esc($usuario->nome),
+            'usuario' => $usuario,
+        ];
+
+        // Quando o usuário for um cliente, podemos retornar para a view de exibição do usuário informando
+        // que ele é um cliente que não é possível adiconá-lo aos outros grupos ou removê-lo de um grupo existente ( clientes)
+        $grupoCliente = 2;
+        if (in_array($grupoCliente, array_column($usuario->grupos, 'grupo_id'))) {
+            return redirect()->to(site_url("usuarios/exibir/$usuario->id"))
+                ->with('info', "Esse usuário é um Cliente, portanto, não é necessário atribuí-lo ou removê-lo de outros grupos de acesso");
+        }
+
+        $grupoAdmin = 1;
+        if (in_array($grupoAdmin, array_column($usuario->grupos, 'grupo_id'))) {
+            $usuario->full_control = true; // está no grupo de admin. Portanto, já podemos retonar a views
+            return view('Usuarios/grupos', $data);
+        }
+
+        $usuario->full_control = false; // não está no grupo admin. Podemos seguir com o processamento
+
+
+        if (!empty($usuario->grupos)) {
+
+            // Recuperamos os grupos que o usuário ainda não faz parte
+
+            $gruposExistentes = array_column($usuario->grupos, 'grupo_id');
+
+            $data['gruposDisponiveis'] = $this->grupoModel
+                ->where('id !=', 2) // Não recuperamos o grupo de clientes
+                ->whereNotIn('id', $gruposExistentes)
+                ->findAll();
+        } else {
+
+            // Recuperamos todos os grupos, com exceção do grupo ID 2 que é o cliente
+
+            $data['gruposDisponiveis'] = $this->grupoModel
+                ->where('id !=', 2) // Não recuperamos o grupo de clientes
+                ->findAll();
+        }
+
+        return view('Usuarios/grupos', $data);
+    }
+
+    public function salvarGrupos()
+    {
+
+        // Envio o hash do token do form
+        $retorno['token'] = csrf_hash();
+
+
+        // Recupero o post da requisição
+        $post = $this->request->getPost();
+
+
+        // Validamos a existência do usuário
+        $usuario = $this->buscaUsuarioOu404($post['id']);
+
+        if (empty($post['grupo_id'])) {
+
+            // Retornamos os erros de validação
+            $retorno['erro'] = 'Por favor verifique os erros abaixo e tente novamente';
+            $retorno['erros_model'] = ['grupo_id' => 'Escolha um ou mais grupos para salvar'];
+
+
+            // Retorno para o ajax request
+            return $this->response->setJSON($retorno);
+        }
+
+
+        if (in_array(2, $post['grupo_id'])) {
+
+
+            // Retornamos os erros de validação
+            $retorno['erro'] = 'Por favor verifique os abaixo e tente novamente';
+            $retorno['erros_model'] = ['grupo_id' => 'O grupo de Clientes não poder ser atribuído de forma manual'];
+
+
+            // Retorno para o ajax request
+            return $this->response->setJSON($retorno);
+        }
+
+
+        // Verificamos se no POST está vindo o grupo admin (ID 1)
+        if (in_array(1, $post['grupo_id'])) {
+            $grupoAdmin = [
+                'grupo_id' => 1,
+                'usuario_id' => $usuario->id
+            ];
+
+            // Associamos o usuário em questão apenas ao grupo admin
+            $this->grupoUsuarioModel->insert($grupoAdmin);
+
+            //Remove todos os demais grupos que estão associados ao usuário em questão
+            $this->grupoUsuarioModel->where('grupo_id !=', 1)
+                ->where('usuario_id', $usuario->id)
+                ->delete();
+
+
+            session()->setFlashdata('sucesso', 'Dados salvos com sucesso!');
+            session()->setFlashdata('info', 'Notamos que o Grupo Administrador foi informado, portanto, não há necessidade de informar outros grupos, pois apenas o Administrador será associado ao usuário!');
+
+            return $this->response->setJSON($retorno);
+        }
+
+
+
+        // Receberá as permissões do POST
+        $grupoPush = [];
+
+        foreach ($post['grupo_id'] as $grupo) {
+            array_push($grupoPush, [
+                'grupo_id' => $grupo,
+                'usuario_id' => $usuario->id
+            ]);
+        }
+
+
+
+        $this->grupoUsuarioModel->insertBatch($grupoPush);
+
+        session()->setFlashdata('sucesso', 'Dados salvos com sucesso!');
+
+        return $this->response->setJSON($retorno);
+    }
+
+    public function removeGrupo(int $principal_id = null)
+    {
+        // if (! $this->usuarioLogado()->temPermissaoPara('editar-usuarios')) {
+        //     return redirect()->back()->with('atencao', $this->usuarioLogado()->nome. ', você não tem permissão para acessar esse menu.');
+        // }
+
+        if ($this->request->getMethod() === 'POST') {
+            $grupoUsuario = $this->buscaGrupoUsuarioOu404($principal_id);
+
+            if ($grupoUsuario->grupo_id == 2) {
+                return redirect()->to(site_url("usuarios/exibir/$grupoUsuario->usuario_id"))->with("info", "Não é permitida a exclusão do usuário do grupo de Clientes");
+            }
+
+            $this->grupoUsuarioModel->delete($principal_id);
+            return redirect()->back()->with("sucesso", "Usuário removido do grupo de acesso com sucesso!");
+        }
+
+        // Não é post
+        return redirect()->back();
+    }
 
     /**
      * Método que recupera o usuário
@@ -424,6 +590,21 @@ class Usuarios extends BaseController
         }
 
         return $usuario;
+    }
+
+    /**
+     * Método que recupera o registro do grupo associado ao usuário
+     *
+     * @param integer $principal_id
+     * @return Exception|object
+     */
+    private function buscaGrupoUsuarioOu404(int $principal_id = null)
+    {
+        if (!$principal_id || !$grupoUsuario = $this->grupoUsuarioModel->find($principal_id)) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("Não encontramos o registro de associação ao grupo de acesso $principal_id");
+        }
+
+        return $grupoUsuario;
     }
 
     private function manipulaImagem(string $caminhoImagem, int $usuario_id)
