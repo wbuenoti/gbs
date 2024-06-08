@@ -2,18 +2,19 @@
 
 namespace App\Libraries;
 
+use PhpParser\Node\Expr\Exit_;
+
 class Autenticacao
 {
-
     private $usuario;
     private $usuarioModel;
-
-
+    private $grupoUsuarioModel;
 
 
     public function __construct()
     {
         $this->usuarioModel = new \App\Models\UsuarioModel();
+        $this->grupoUsuarioModel = new \App\Models\GrupoUsuarioModel();
     }
 
     /**
@@ -31,17 +32,23 @@ class Autenticacao
         // Validamos se o usuário foi encontrado
         if ($usuario === null) {
 
+            exit('Usuario não encontrado');
+
             return false;
         }
 
         // Vericamos se a senha é válida
         if ($usuario->verificaPassword($password) == false) {
 
+            exit('Sennha Invalida');
+
             return false;
         }
 
         // Verificamos se o usuário pode logar na aplicação
         if ($usuario->ativo == false) {
+
+            exit('Usuario sem direito de acesso');
 
             return false;
         }
@@ -139,5 +146,59 @@ class Autenticacao
 
         // Retornamos o objeto $usuario
         return $usuario;
+    }
+
+    /**
+     * Método que verifica se o usuário logado (session()->get('usuario_id')) está associado ao grupo de admin
+     *
+     * @return boolean
+     */
+    private function isAdmin(): bool
+    {
+
+        // Definimos o ID do grupo admin.
+        // Não equeçam que esse ID jamais poderá ser alterado.
+        // Por isso, nós defendemos no controller
+        $grupoAdmin = 1;
+
+        // Verificamos se o usuário logado está no grupo de admintrador
+        $administrador = $this->grupoUsuarioModel->usuarioEstaNoGrupo($grupoAdmin, session()->get('usuario_id'));
+
+
+        // Verificamos se foi encontrado o registro
+        if ($administrador == null) {
+
+            return false;
+        }
+
+        // Retornamos true, ou seja, o usuário logado faz parte do grupo admin
+        return true;
+    }
+
+    /**
+     * Método que verifica se o usuário logado (session()->get('usuario_id')) está associado ao grupo de clientes
+     *
+     * @return boolean
+     */
+    private function isCliente(): bool
+    {
+
+        // Definimos o ID do grupo cliente.
+        // Não equeçam que esse ID jamais poderá ser alterado.
+        // Por isso, nós defendemos no controller
+        $grupoCliente = 2;
+
+        // Verificamos se o usuário logado está no grupo de admintrador
+        $cliente = $this->grupoUsuarioModel->usuarioEstaNoGrupo($grupoCliente, session()->get('usuario_id'));
+
+
+        // Verificamos se foi encontrado o registro
+        if ($cliente == null) {
+
+            return false;
+        }
+
+        // Retornamos true, ou seja, o usuário logado faz parte do grupo admin
+        return true;
     }
 }
