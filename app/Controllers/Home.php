@@ -21,11 +21,15 @@ class Home extends BaseController
         $autenticacao = new Autenticacao();
 
 
-        $autenticacao->login('liam.sauer@johnston.com.br', '123456');
+        $autenticacao->login('pratashow@gmail.com', '123456');
 
-        // dd($autenticacao->pegaUsuarioLogado());
+        $usuario = $autenticacao->pegaUsuarioLogado();
 
-        dd($autenticacao->isCliente());
+        dd($usuario->temPermissaoPara('criar-ordens'));
+
+
+
+        // dd($autenticacao->isCliente());
 
         // $autenticacao->logout();
         // return redirect()->to(site_url('/'));
