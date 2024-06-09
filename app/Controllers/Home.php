@@ -18,14 +18,14 @@ class Home extends BaseController
     {
 
 
-        $autenticacao = new Autenticacao();
+        $autenticacao = service('autenticacao');
 
 
         $autenticacao->login('pratashow@gmail.com', '123456');
 
         $usuario = $autenticacao->pegaUsuarioLogado();
 
-        dd($usuario->temPermissaoPara('criar-ordens'));
+        dd($usuario);
 
 
 

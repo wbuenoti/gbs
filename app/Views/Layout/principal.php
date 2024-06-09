@@ -17,7 +17,7 @@
   <!-- Google fonts - Muli-->
   <link rel="stylesheet" href="<?php echo site_url('recursos/'); ?>https://fonts.googleapis.com/css?family=Muli:300,400,700">
   <!-- theme stylesheet-->
-  <link rel="stylesheet" href="<?php echo site_url('recursos/'); ?>css/style.default.css" id="theme-stylesheet">
+  <link rel="stylesheet" href="<?php echo site_url('recursos/'); ?>css/style.blue.css" id="theme-stylesheet">
   <!-- Custom stylesheet - for your changes-->
   <link rel="stylesheet" href="<?php echo site_url('recursos/'); ?>css/custom.css">
   <!-- Favicon-->
