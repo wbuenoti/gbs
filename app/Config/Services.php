@@ -19,6 +19,7 @@ use CodeIgniter\Config\BaseService;
  */
 class Services extends BaseService
 {
+
     public static function autenticacao($getShared = true)
     {
         if ($getShared) {

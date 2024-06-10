@@ -25,9 +25,9 @@ class Home extends BaseController
 
         $usuario = $autenticacao->pegaUsuarioLogado();
 
+        // dd($usuario->temPermissaoPara('criar-ordens'));
+
         dd($usuario);
-
-
 
         // dd($autenticacao->isCliente());
 
