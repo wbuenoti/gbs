@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 09/06/2024 às 05:39
+-- Tempo de geração: 10/06/2024 às 07:08
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -95,7 +95,8 @@ INSERT INTO `grupos_usuarios` (`id`, `grupo_id`, `usuario_id`) VALUES
 (4, 1, 6004),
 (5, 3, 6004),
 (6, 5, 6004),
-(25, 1, 6002);
+(25, 1, 6002),
+(26, 4, 6001);
 
 -- --------------------------------------------------------
 
@@ -6258,7 +6259,7 @@ ALTER TABLE `grupos_permissoes`
 -- AUTO_INCREMENT de tabela `grupos_usuarios`
 --
 ALTER TABLE `grupos_usuarios`
-  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de tabela `migrations`
